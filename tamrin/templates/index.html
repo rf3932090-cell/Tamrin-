@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tamrin</title>
+  <style>
+    /* Reset */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+
+    /* صفحه */
+    body{
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Tahoma";
+      background: linear-gradient(135deg,#f6f8ff 0%, #c3c9d3ff 50%, #aac4e6ff 100%);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:100vh;
+      padding:20px;
+      color:#0f172a;
+    }
+
+    /* کارت */
+    .card{
+      width:min(420px, 92%);
+      background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(240, 240, 247, 0.95));
+      border-radius:16px;
+      padding:28px 26px;
+      box-shadow: 0 10px 30px rgba(12, 24, 71, 0.12), inset 0 1px 0 rgba(255,255,255,0.6);
+      text-align:center;
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(12,24,71,0.06);
+    }
+
+  
+    h1{
+      font-size:20px;
+      margin-bottom:6px;
+      letter-spacing:0.2px;
+    }
+
+
+    /* برای موبایل */
+    @media (max-width:420px){
+      .card{padding:20px;border-radius:12px}
+      .avatar{width:72px;height:72px;font-size:28px}
+      h1{font-size:18px}
+    }
+  </style>
+</head>
+<body>
+  <main class="card" role="region" aria-label="کارت با نام">
+    
+    <h1 id="display-name">فاطمه راضیه</h1>
+  </main>
+</body>
+</html>
