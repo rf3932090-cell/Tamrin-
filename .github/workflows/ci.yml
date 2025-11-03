@@ -1,4 +1,4 @@
-name: CI/CD Pipeline with SSH (password)
+name: CI/CD Pipeline
 
 on:
   push:
@@ -7,35 +7,38 @@ on:
 
 jobs:
   build:
-    name: Build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
-      - name: Simulate build
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
         run: |
-          echo "Building (simulated)..."
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt || true
 
   test:
-    name: Test
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
-      - name: Simulate tests
-        run: |
-          echo "Running tests (simulated)..."
+      - name: Run basic tests
+        run: echo "No tests yet, skipping."
 
   deploy:
-    name: Deploy via SCP/SSH (uses password)
     runs-on: ubuntu-latest
     needs: test
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      # copy files from repo to remote server (adjust source and target as needed)
       - name: Copy project files to server
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -43,20 +46,24 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASS }}
           port: 22
-          source: "tamrin/templates/*"        # ← مسیر محلی در ریپو؛ اگر می‌خواهی tamrin/templates/* بفرستی، عوضش کن
-          target: "/var/www/RAAZIEH"   # ← مسیر مقصد روی سرور — آن را با مسیر صحیح جایگزین کن
+          source: "."
+          target: "/var/www/RAAZIEH"
 
-      # optional: run commands on remote (مثلاً برای restart یا permission)
-      - name: Run remote commands (optional)
-        uses: appleboy/ssh-action@v0.1.7
+      - name: Run Flask app on server
+        uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASS }}
           port: 22
           script: |
-            echo "Listing deployed files in /var/www/html:"
-            ls -la /var/www/RAAZIEH
-            # اگر لازم است سرویس وب را ری‌استارت کن (در صورت داشتن مجوز sudo):
-            # echo "${{ secrets.SERVER_PASS }}" | sudo -S systemctl restart nginx || true
-        
+            cd /var/www/RAAZIEH
+            if [ -d "venv" ]; then
+              source venv/bin/activate
+            else
+              python3 -m venv venv
+              source venv/bin/activate
+              pip install -r requirements.txt || true
+            fi
+            pkill -f "python3 app.py" || true
+            nohup python3 app.py > app.log 2>&1 &
