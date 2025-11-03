@@ -57,7 +57,7 @@ jobs:
           password: ${{ secrets.SERVER_PASS }}
           port: 22
           script: |
-            cd /var/www/RAAZIEH
+            cd /var/www/RAAZIEH/tamrin
             if [ -d "venv" ]; then
               source venv/bin/activate
             else
